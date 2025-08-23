@@ -19,20 +19,18 @@ bool checkVectorSorted(const vector<int>& nums) {
 
 int doDVDMoveFunction(vector<int> v) {
 	int numMoves = 0;
-	while (!checkVectorSorted(v)) {
+	while (true) {
 		int curNumber = v[v.size() - 1];
 		for (int i = v.size() - 1; i >= 0; i--) {
 			if (v[i] == curNumber + 1) {
 				numMoves++;
-				v.push_back(v[i]);
-				auto it = v.begin() + i;
-				v.erase(it);
-				i++;
-				curNumber = v[v.size() - 1];
+				curNumber = v[i];
+				if (curNumber == v.size()) {
+					return numMoves;
+				}
 			}
 		}
 	}
-	return numMoves;
 }
 
 int main() {
