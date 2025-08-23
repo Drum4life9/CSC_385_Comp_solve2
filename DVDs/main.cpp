@@ -17,18 +17,30 @@ bool checkVectorSorted(const vector<int>& nums) {
 	return true;
 }
 
-int doDVDMoveFunction(vector<int> v) {
+int doDVDMoveFunction(int n, vector<int> v) {
 	int numMoves = 0;
+	int startIndexFromEnd = 0;
 	while (true) {
-		int curNumber = v[v.size() - 1];
+		int lastNumMoves = 0;
+		int curNumber = v[v.size() - 1 - startIndexFromEnd];
 		for (int i = v.size() - 1; i >= 0; i--) {
 			if (v[i] == curNumber + 1) {
 				numMoves++;
+				lastNumMoves++;
 				curNumber = v[i];
-				if (curNumber == v.size()) {
+				auto it = v.begin() + i;
+				v.erase(it);
+				startIndexFromEnd = 0;
+				if (curNumber == n) {
 					return numMoves;
 				}
 			}
+		}
+		if (lastNumMoves == 0) {
+			startIndexFromEnd++;
+		}
+		if (startIndexFromEnd == v.size()) {
+			return numMoves;
 		}
 	}
 }
@@ -44,7 +56,12 @@ int main() {
 		for (int j = 0; j < numMoves; j++) {
 			cin >> nums[j];
 		}
-		cout << doDVDMoveFunction(nums) << endl;
+		cout << doDVDMoveFunction(numMoves, nums) << endl;
 	}
 };
 
+// 2
+// 4
+// 1 3 2 4
+// 5
+// 5 1 2 4 3
