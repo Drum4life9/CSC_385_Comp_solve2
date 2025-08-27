@@ -2,10 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "DVDs.exe"
-		},
-		{
-			"path" : "DVDs.pdb"
+			"path" : "DVDs"
 		}
 	],
 	"backtrace" : 1,
@@ -38,7 +35,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -std=gnu++20 -fdiagnostics-color=always"
+					"fragment" : "-g -std=gnu++20 -arch arm64 -fcolor-diagnostics"
 				}
 			],
 			"language" : "CXX",
@@ -64,20 +61,12 @@
 			{
 				"fragment" : "-g",
 				"role" : "flags"
-			},
-			{
-				"fragment" : "",
-				"role" : "flags"
-			},
-			{
-				"fragment" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32",
-				"role" : "libraries"
 			}
 		],
 		"language" : "CXX"
 	},
 	"name" : "DVDs",
-	"nameOnDisk" : "DVDs.exe",
+	"nameOnDisk" : "DVDs",
 	"paths" : 
 	{
 		"build" : ".",
