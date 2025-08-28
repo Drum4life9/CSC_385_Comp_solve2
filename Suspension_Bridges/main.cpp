@@ -13,11 +13,12 @@ int main() {
     // l(a,d) = 2a * sinh(d/2*a)
 
     double lower_bound = 0;
-    double upper_bound = 10000;
+    double upper_bound = 100000000;
 
     while (true) {
         double a = ((upper_bound - lower_bound) / 2) + lower_bound;
-        double rside = a * cosh(d / (2 * a)) - a;
+        double x = d / (2 * a);
+        double rside = a * ((exp(x) + exp(-1 * x)) / 2 ) - a;
         // increasing a decreases cosh
 
         //check diff in rside and lside
