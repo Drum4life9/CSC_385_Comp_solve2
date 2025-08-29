@@ -16,8 +16,8 @@ int main() {
     cin >> t2_height;
 
     for (int i = 0; i < 4; i++) {
-        for (int j = i+1; j < 5; j++) {
-            for (int k = j+1; k < 6; k++) {
+        for (int j = 1; j < 5; j++) {
+            for (int k = 2; k < 6; k++) {
                 int sum = boxes[i] + boxes[j] + boxes[k];
                 if (sum == t1_height || sum == t2_height) {
                     int sum2 = 0;
@@ -34,7 +34,12 @@ int main() {
                     std::sort(others.begin(), others.end(), std::greater<int>());
                     std::sort(boxesUsing.begin(), boxesUsing.end(), std::greater<int>());
                     if ((sum == t1_height && sum2 == t2_height) || (sum == t2_height && sum2 == t1_height)) {
-                        cout << boxesUsing[0] << " " << boxesUsing[1] << " " << boxesUsing[2] << " " << others[0] << " " << others[1] << " " << others[2] << endl;
+                        if (sum == t1_height) {
+                            cout << boxesUsing[0] << " " << boxesUsing[1] << " " << boxesUsing[2] << " " << others[0] << " " << others[1] << " " << others[2] << endl;
+                            return 0;
+                        }
+                        cout << others[0] << " " << others[1] << " " << others[2] << " " << boxesUsing[0] << " " << boxesUsing[1] << " " << boxesUsing[2] << " " << endl;
+
                         return 0;
                     }
                 }
@@ -42,3 +47,4 @@ int main() {
         }
     }
 }
+//12 8 2 4 10 3 14 25
