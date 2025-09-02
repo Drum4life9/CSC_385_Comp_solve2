@@ -1,29 +1,45 @@
 #include <iostream>
-#include <cmath>
+#include <vector>
 
 using namespace std;
 
 int main() {
-    unsigned int inp = 0;
+    int inp = 0;
     cin >> inp;
 
-    for (int j = 0; j <= 100000; j++) {
-        int mi = 0;
-        if (j*j > 200000) {
-            mi = max(int(sqrt(j*j - 200000)) - 1, 0);
-             // if (j * j - ((j-1) * (j-1)) > inp) break;
-        }
-        for (int i = mi; i <= j + 10; i++) {
-            unsigned int res = (j * j) - (i * i);
+    vector<pair<int, int>> options;
 
-            if (res < inp) break;
-
-            if (res == inp) {
-                cout << i << ' ' << j << endl;
-                return 0;
+    for (int b = 1; b <= 2000000; b++) {
+        for (int a = 1; a <= b; a++) {
+            if (a * b > inp) {
+                break;
+            }
+            if (a * b == inp) {
+                int j = (a+b)/2;
+                int i = (b-a)/2;
+                if (j * j - i * i == inp) {
+                    options.emplace_back(i, j);
+                    cout << i << " " << j << endl;
+                    return 0;
+                }
             }
         }
     }
+
+    // if (options.size() > 0) {
+    //     int index_least = -1;
+    //     int least_i = 1000000000;
+    //     for (int i = 0; i < options.size(); i++) {
+    //         if (options[i].first < least_i) {
+    //             index_least = i;
+    //             least_i = options[i].first;
+    //         }
+    //     }
+    //
+    //     cout << options[index_least].first << " " << options[index_least].second << endl;
+    //     return 0;
+    // }
+
     cout << "impossible" << endl;
 
 }
