@@ -48,6 +48,7 @@ int main() {
     cin >> num;
 
     vector<vertex> graph;
+    graph.reserve(3200000);
     graph.emplace_back(0, ' ', 0);
 
     string blank = "";
@@ -57,7 +58,14 @@ int main() {
     for (int n = 0; n < num; n++) {
         getline(cin, word);
 
-        vertex& curVertex = graph[0];
+        vertex* curVertex;
+
+        for (int i = 0; i < graph.size(); ++i) {
+            if (graph[i].idx == 0) {
+                curVertex = &graph[i];
+                curVertex->count++;
+            }
+        }
 
         int i = 0;
         while (i < word.size()) {
@@ -65,30 +73,28 @@ int main() {
             char c = word[i];
             //loop through edges in curvertex
             bool added_to_a_vertex = false;
-            for (edge& e : curVertex.edges) {
+            for (edge& e : curVertex->edges) {
                 //if we can move on to a new vertex in the graph
                 if (graph[e.dest].val == c) {
                     //update current vertex to add a new character
-                    curVertex.count++;
                     i++;
-                    curVertex = graph[e.dest];
+                    curVertex = &graph[e.dest];
+                    curVertex->count++;
                     added_to_a_vertex = true;
                     break;
                 }
             }
             if (!added_to_a_vertex) {
-                graph.emplace_back(graph.size(), c, 1);
-                graph[graph.size() - 1].edges.emplace_back(curVertex.idx, graph.size() - 1);
-                curVertex = graph[graph.size() - 1];
+                graph.push_back(vertex(graph.size(), c, 1));
+                curVertex->edges.emplace_back(curVertex->idx, graph.size() - 1);
+                curVertex = &graph[graph.size() - 1];
+                i++;
             }
 
 
             if (i == word.size()) {
-                cout << curVertex.count - 1 << endl;
+                cout << curVertex->count - 1 << endl;
             }
         }
     }
 }
-//todo add hist error
-//todo try historie error
-//todo add low - hi per vertex map thingy
