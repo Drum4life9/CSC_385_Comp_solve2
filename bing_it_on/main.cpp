@@ -88,5 +88,7 @@ int main() {
             }
         }
     }
-
 }
+//todo add hist error
+//todo try historie error
+//todo add low - hi per vertex map thingy
