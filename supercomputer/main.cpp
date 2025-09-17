@@ -3,149 +3,106 @@
 
 using namespace std;
 
-int main() {
-    int N, K;
+int getSum(int BITree[], int index)
+{
+    int sum = 0; // Initialize result
 
+    // index in BITree[] is 1 more than the index in arr[]
+    index = index + 1;
+
+    // Traverse ancestors of BITree[index]
+    while (index>0)
+    {
+        // Add current element of BITree to sum
+        sum += BITree[index];
+
+        // Move index to parent node in getSum View
+        index -= index & (-index);
+    }
+    return sum;
+}
+
+// Updates a node in Binary Index Tree (BITree) at given index
+// in BITree. The given value 'val' is added to BITree[i] and
+// all of its ancestors in tree.
+void updateBIT(int BITree[], int n, int index, int val)
+{
+    // index in BITree[] is 1 more than the index in arr[]
+    index = index + 1;
+
+    // Traverse all ancestors and add 'val'
+    while (index <= n)
+    {
+        // Add 'val' to current node of BI Tree
+        BITree[index] += val;
+
+        // Update index to that of parent in update View
+        index += index & (-index);
+    }
+}
+
+// Constructs and returns a Binary Indexed Tree for given
+// array of size n.
+int *constructBITree(int arr[], int n)
+{
+    // Create and initialize BITree[] as 0
+    int *BITree = new int[n+1];
+    for (int i=1; i<=n; i++)
+        BITree[i] = 0;
+
+    // Store the actual values in BITree[] using update()
+    // for (int i=0; i<n; i++)
+    //     updateBIT(BITree, n, i, arr[i]);
+
+    return BITree;
+}
+
+int main() {
+
+    int N, K;
     cin >> N >> K;
 
-    vector<pair<int, int>> m;
+    int computer[N];
+    for (int i = 0; i < N; i++)
+        computer[i] = 0;
+
+    int* BITree = constructBITree(computer, N);
+
 
     for (int k = 0; k < K; k++) {
+        // Uncomment below lines to see contents of BITree[]
         char op;
         cin >> op;
         if (op == 'F') {
             int index;
             cin >> index;
-            //todo do flip here
-
-            if (m.empty()) {
-                m.emplace_back(index, index);
-                continue;
-            }
-
-            int starting_index = 0;
-            int ending_index = m.size() - 1;
-            int checking_index = (ending_index - starting_index) / 2;
-
-            pair<int, int>* checking_pair = nullptr;
-            while (true) {
-                if (m[checking_index].first <= index && m[checking_index].second >= index) {
-                    checking_pair = &m[checking_index];
-                    break;
-                }
-                if (starting_index == ending_index) {
-                    break;
-                }
-                checking_pair = &m[checking_index];
-                if (checking_pair->first > index) {
-                    ending_index = checking_index;
-                }
-                else if (checking_pair->second < index) {
-                    starting_index = checking_index + 1;
-                }
-                checking_pair = nullptr;
-                checking_index = ((ending_index - starting_index) + starting_index) / 2 + 1;
-
-            }
-
-            if (checking_pair == nullptr) {
-                //if checking_pair is less than index
-                //whenever possible, it's easier to tack the new index onto the end of an existing pair
-                if (m[checking_index].second == index - 1) {
-                    m[checking_index].second = index;
-                    if (checking_index != m.size() - 1 && m[checking_index + 1].first == index + 1) {
-                        //combine pairs
-                        m[checking_index].second = m[checking_index + 1].second;
-                        m.erase(m.begin() + checking_index + 1);
-                    }
-                }
-                else if (m[checking_index].first == index + 1) {
-                    m[checking_index].first = index;
-                    if (checking_index != 0 && m[checking_index - 1].second == index - 1) {
-                        m[checking_index].first = m[checking_index - 1].first;
-                        m.erase(m.begin() + checking_index - 1);
-                    }
-                }
-                else {
-                    if (index < m[checking_index].first) {
-                        m.insert(m.begin() + checking_index, make_pair(index, index));
-                    }
-                    else {
-                        m.insert(m.begin() + checking_index + 1, make_pair(index, index));
-                    }
-                }
-
-
-                continue;
-            }
-
-            //if it's a single item pair, delete it
-            if (checking_pair->first == checking_pair->second) {
-                auto it = ranges::find(m, *checking_pair);
-                if (it != m.end()) { m.erase(it); }
-            }
-            else if (checking_pair->first == index) {
-                checking_pair->first = index + 1;
-            }
-            else if (checking_pair->second == index) {
-                checking_pair->second = index - 1;
+            index -= 1;
+            // Let use test the update operation
+            if (computer[index] == 0) {
+                computer[index] = 1;
+                updateBIT(BITree, N, index, 1); //Update BIT for above change in arr[]
             }
             else {
-                //we're in the middle, so we should split
-                int temp_end = checking_pair->second;
-                checking_pair->second = index - 1;
-                m.insert(m.begin() + checking_index + 1, make_pair(index + 1, temp_end));
+                computer[index] = 0;
+                updateBIT(BITree, N, index, -1); //Update BIT for above change in arr[]
             }
-            // checking_pair->second = index - 1;
-
-
         }
         else {
             int start_index, end_index;
             cin >> start_index >> end_index;
 
-            vector<pair<int, int>*> covered_pairs;
-            for (auto& i : m) {
-                pair<int, int>* p = &i;
-                //pair fully contained in range
-                if (p->first >= start_index && p->second <= end_index) {
-                    covered_pairs.push_back(p);
-                }
-                //pair contains left index of search range
-                else if (p->first <= start_index && p->second >= start_index) {
-                    covered_pairs.push_back(p);
-                }
-                //pair contains right index of search range
-                else if (p->first <= end_index && p->second >= end_index) {
-                    covered_pairs.push_back(p);
-                }
+            start_index -= 1;
+            end_index -= 1;
 
+            int wholeSum = getSum(BITree, end_index);
+            int partialSum = 0;
+            if (start_index != 0) {
+                partialSum = getSum(BITree, start_index - 1);
             }
-
-            if (covered_pairs.empty()) {
-                cout << 0 << endl;
-            }
-            else {
-                int start_diff = 0, end_diff = 0;
-                if (covered_pairs[0]->first < start_index) {
-                    start_diff = covered_pairs[0]->first - start_index;
-                }
-                if (covered_pairs[covered_pairs.size() - 1]->second > end_index) {
-                    end_diff = covered_pairs[covered_pairs.size() - 1]->second - end_index;
-                }
-
-                int running_amount = 0;
-
-                for (const pair<int, int>* i : covered_pairs) {
-                    running_amount += (i->second - i->first) + 1;
-                }
-                running_amount -= end_diff;
-                running_amount -= start_diff;
-
-                cout << running_amount << endl;
-            }
+            cout << wholeSum - partialSum << endl;
         }
     }
+
 }
 /*
 8 5
