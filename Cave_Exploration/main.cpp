@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -56,19 +57,38 @@ void Graph::add_edge(int src, int dest, double weight)
 }
 
 
-vector<int> par;
-vector<bool> visited;
-vector<bool> curWorkingCycle;
-vector<int> cycleNodesContaining0;
+vector<const vertex* > vertex_stack;
+map<int, bool> is_a_safe_vertex;
+map<int, bool> has_fully_explored;
+map<int, bool> current_path;
 
-void dfs(int v, vector<vertex>& graph) {
-    visited[v] = true;
 
-    for (const edge e : graph[v].edges){
-        par[e.dest] = v;
-        if (!visited[e.dest])
-            dfs(e.dest, graph);
+void dfs(const vector<vertex>& graph, const vertex& v, int parent_id) {
+    //mark current vertex as exploring
+    current_path[v.idx] = true;
+
+    for (edge e : v.edges) {
+        if (e.dest == parent_id) {
+            continue;
+        }
+
+        const vertex& new_vert = graph[e.dest];
+        if (!current_path[new_vert.idx]) {
+            vertex_stack.push_back(&new_vert);
+            dfs(graph, new_vert, v.idx);
+        }
+
+        // If the vertex we're checking is already safe, then everything currently in the "stack" is safe
+        if (is_a_safe_vertex[new_vert.idx]) {
+            for (const vertex* now_safe_vertex : vertex_stack) {
+                is_a_safe_vertex[now_safe_vertex->idx] = true;
+            }
+        }
     }
+    has_fully_explored[v.idx] = true;
+    current_path[v.idx] = false;
+    vertex_stack.pop_back();
+
 }
 
 int main() {
@@ -82,12 +102,43 @@ int main() {
     }
 
     vector<vertex> graph = graphy.graph;
-    par = vector(graph.size(), -1);
-    visited = vector(graph.size(), false);
 
-    dfs(0, graph);
+    vertex_stack.push_back(&graph[0]);
+    for (int i = 0; i < N; i++) {
+        current_path[i] = false;
+        is_a_safe_vertex[i] = false;
+    }
+    is_a_safe_vertex[0] = true;
+    has_fully_explored[0] = false;
+
+    dfs(graph, graph[0], 0);
+
+    int count = 0;
+
+    for (const auto& pair : is_a_safe_vertex) {
+        if (pair.second) {
+            count++;
+        }
+    }
+
+    cout << count << endl;
 
     return 0;
 
 
 }
+/*
+9 11
+0 1
+0 2
+1 3
+2 3
+2 8
+3 4
+4 5
+4 6
+5 7
+6 7
+4 1
+
+*/
